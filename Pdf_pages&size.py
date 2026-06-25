@@ -1,4 +1,3 @@
-print(f"Saved to: {output_file}")
 import os
 fileee = r'D:\Astro Books\Books\BPHS_hindi_part_2.pdf'
 print(f"Size: {os.path.getsize(fileee)/(1024*1024):.2f} MB")
