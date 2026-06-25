@@ -3,6 +3,7 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+<<<<<<< HEAD
 # Virtual environments
 venv/
 .venv/
@@ -27,6 +28,8 @@ __pycache__/
 Books/
 *.pdf
 
+=======
+>>>>>>> daf04c57b84ddeb23aa944b908e550e4057bb32c
 # C extensions
 *.so
 
