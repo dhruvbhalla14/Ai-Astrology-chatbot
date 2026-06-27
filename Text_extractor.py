@@ -14,7 +14,7 @@ api_key = os.getenv("LLAMA_CLOUD_API_KEY")
 if not api_key:
     raise RuntimeError("LLAMA_CLOUD_API_KEY is not set. Add it to .env or your shell environment.")
 
-pdf_path = Path(r"D:\Astro Books\Books\Phaladeepika_part_2.pdf")
+pdf_path = Path(r"D:\Astro Books\Books\BPHS_English_Book.pdf")
 if not pdf_path.exists():
     raise FileNotFoundError(f"PDF not found: {pdf_path}")
 
@@ -38,7 +38,7 @@ docs = [Document(page_content=doc.text) for doc in llama_docs]
 print(f"Loaded {len(docs)} documents")
 
 
-output_file = r"D:\Astro Books\Books\Phaladeepika_part_2.md"
+output_file = r"D:\Astro Books\Books\BPHS_English_Book2.md"
 with open(output_file, "w", encoding="utf-8") as f:
     for doc in docs:
         f.write(doc.page_content)
@@ -47,6 +47,6 @@ with open(output_file, "w", encoding="utf-8") as f:
 
 
 print(f"Saved to: {output_file}")
-output_file = r'D:\Astro Books\Books\Phaladeepika_part_2.md'
+output_file = r'D:\Astro Books\Books\BPHS_English_Book2.md'
 print(f"Size: {os.path.getsize(output_file)/(1024*1024):.2f} MB")
 
