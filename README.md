@@ -13,4 +13,7 @@ chunks
 Embeddings
       ↓
 Chroma DB (permanent)
+
+
+Splitter
 """
