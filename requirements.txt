@@ -1,2 +1,6 @@
 langchain
 langchain-community
+langchain-text-splitters
+tiktoken
+python-dotenv
+langchain_core
