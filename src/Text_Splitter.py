@@ -50,7 +50,7 @@ def split_documents(docs):
 
 
 if __name__ == "__main__":
-    from document_loader import load_documents
+    from src.document_loader import load_documents
     docs = load_documents()
     chunks = split_documents(docs)
 
