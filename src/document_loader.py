@@ -4,7 +4,7 @@ from langchain_community.document_loaders import TextLoader
 
 def load_documents():
     loader = DirectoryLoader(
-        path = r'D:\Astro Books\Books\md Files' ,
+        path = r'D:\Astro Books\data\processed' ,
         glob = '*.md' , 
         loader_cls = TextLoader,
         loader_kwargs= {'encoding':'utf-8'}
