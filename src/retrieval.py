@@ -1,14 +1,22 @@
-from langchain.retrievers import BM25Retriever, EnsembleRetriever
+from langchain_community.retrievers import BM25Retriever
+from langchain_classic.retrievers import EnsembleRetriever
+from vector_store import load_vector
 from langchain_core.documents import Document
 
 
-# get chunks back from chroma
+# Load the persisted Chroma store once and build retrievers from it.
+vector_store = load_vector()
+
+# Get chunks back from Chroma.
 all_docs = vector_store.get()
 
 chunks = [
     Document(page_content=text, metadata=meta)
     for text, meta in zip(all_docs["documents"], all_docs["metadatas"])
 ]
+
+if not chunks:
+    raise ValueError("No indexed documents found in Chroma. Expected data under src/chroma_db.")
 
 # 1. BM25 - keyword based
 bm25_retriever = BM25Retriever.from_documents(chunks)
