@@ -1,6 +1,10 @@
 langchain
 langchain-community
+langchain-chroma
+langchain-openai
 langchain-text-splitters
+fastapi
+uvicorn
 tiktoken
 python-dotenv
 unstructured
@@ -8,4 +12,4 @@ pymupdf
 markdown
 chromadb
 openai
-prank_bm25
+rank_bm25
