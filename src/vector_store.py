@@ -1,12 +1,11 @@
 from pathlib import Path
-from dotenv import load_dotenv
-
-ROOT_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(ROOT_DIR / ".env")
 
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from langchain_openai import OpenAIEmbeddings
+
+
+CHROMA_DIR = Path(__file__).resolve().parent / "chroma_db"
 
 def create_vector(chunks):
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
