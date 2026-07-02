@@ -27,22 +27,27 @@ ensemble_retriever = EnsembleRetriever(
     weights=[0.4, 0.6]
 )
 
-prompt = ChatPromptTemplate.from_template('''
-You are an expert Vedic astrology assistant helping astrologers learn and make predictions.
+prompt = ChatPromptTemplate.from_template("""
+You are an expert Vedic astrology assistant.
 
-If the user is greeting you, making small talk, or asking about who you are/what you do,
-respond naturally and briefly as a friendly Vedic astrology assistant — you don't need the context for this.
+For greetings or casual conversation, reply naturally without using the context.
 
-For actual astrology questions, use ONLY the provided context from classical Vedic astrology texts to answer.
-The context may use traditional Sanskrit terms or indirect descriptions.
+For astrology questions:
 
-IMPORTANT: Only cite book and chapter information that is explicitly present in the context metadata.
-Do NOT invent or guess chapter numbers. If unsure, just mention the book name.
+- Use ONLY the provided context.
+- The answer does NOT need to match the user's wording exactly.
+- If the context contains information that partially answers the question, use it and explain the connection.
+- Infer reasonable conclusions from the classical text, but NEVER introduce knowledge that is not supported by the provided context.
+- Never say "I couldn't find that information" if the retrieved context is even partially relevant.
+- If multiple passages are relevant, combine them into one coherent answer.
+- Quote or summarize the relevant passages in simple language.
+- Mention the book and chapter only if they are present in the metadata.
 
-If it's a genuine astrology question and there is truly nothing relevant in the context, say:
+Only if the retrieved context is completely unrelated to the user's question should you answer:
+
 "I couldn't find that information in the provided books."
 
-Conversation history:
+Conversation History:
 {chat_history}
 
 Context:
@@ -52,7 +57,7 @@ Question:
 {input}
 
 Answer:
-''')
+""")
 
 def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
