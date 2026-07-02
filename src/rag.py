@@ -1,6 +1,7 @@
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
+from pathlib import Path
 from vector_store import vector_store, chunks
 from langchain_community.retrievers import BM25Retriever
 from langchain_classic.retrievers import EnsembleRetriever
@@ -8,7 +9,7 @@ from langchain_core.output_parsers import StrOutputParser
 from openai import RateLimitError
 import os
 
-load_dotenv()
+load_dotenv(Path(__file__).parent / ".env")  # always finds .env next to rag.py
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
