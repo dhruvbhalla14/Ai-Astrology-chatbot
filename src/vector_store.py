@@ -1,9 +1,11 @@
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).parent / ".env")  # load key before OpenAI is called
 
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from langchain_openai import OpenAIEmbeddings
-
 
 CHROMA_DIR = Path(__file__).resolve().parent / "chroma_db"
 
