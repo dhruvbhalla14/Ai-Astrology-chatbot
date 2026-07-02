@@ -9,7 +9,8 @@ from langchain_core.output_parsers import StrOutputParser
 from openai import RateLimitError
 import os
 
-load_dotenv(Path(__file__).parent / ".env")  # always finds .env next to rag.py
+#load_dotenv(Path(__file__).parent / ".env")  # always finds .env next to rag.py
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
