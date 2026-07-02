@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Jyotish — Vedic Astrology Oracle</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -21,21 +21,58 @@
     --text-dim:    #4a4465;
     --user-bg:     #1e1a35;
     --user-border: #3a3060;
+    --backdrop:    rgba(0,0,0,0.55);
+  }
+
+  /* ── Light theme ── */
+  html[data-theme="light"] {
+    --void:        #f7f2e5;
+    --deep:        #ffffff;
+    --surface:     #ffffff;
+    --raised:      #f1e9d4;
+    --border:      #ddd0ab;
+    --gold:        #96701f;
+    --gold-dim:    #c9a84c;
+    --gold-glow:   rgba(150,112,31,0.12);
+    --gold-glow2:  rgba(150,112,31,0.07);
+    --text:        #2b2415;
+    --text-muted:  #7a705a;
+    --text-dim:    #a89b7c;
+    --user-bg:     #f1e6c8;
+    --user-border: #ddc48a;
+    --backdrop:    rgba(40,30,10,0.35);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
+  html, body {
     background: var(--void);
+  }
+
+  body {
     color: var(--text);
     font-family: 'Inter', sans-serif;
     font-size: 14px;
     height: 100vh;
+    height: 100dvh;
     display: flex;
     overflow: hidden;
+    transition: background 0.25s ease, color 0.25s ease;
   }
 
-  /* ── Sidebar ── */
+  /* ── Backdrop (mobile drawer scrim) ── */
+  .sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: var(--backdrop);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 90;
+  }
+  .sidebar-backdrop.visible { opacity: 1; pointer-events: auto; }
+
+  /* ── Sidebar (slide-out drawer) ── */
   .sidebar {
     width: 260px;
     min-width: 260px;
@@ -45,11 +82,25 @@
     flex-direction: column;
     padding: 0;
     overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1), background 0.25s ease, border-color 0.25s ease;
   }
 
+  .sidebar.open { transform: translateX(0); }
+
   .sidebar-header {
-    padding: 28px 20px 20px;
+    padding: 20px 16px 20px 20px;
     border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
   }
 
   .brand {
@@ -87,6 +138,22 @@
     text-transform: uppercase;
     padding-left: 42px;
   }
+
+  .sidebar-close-btn {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .sidebar-close-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
 
   .new-chat-btn {
     margin: 16px 20px 0;
@@ -158,11 +225,35 @@
   .sidebar-footer {
     padding: 14px 20px;
     border-top: 1px solid var(--border);
-    font-size: 11px;
-    color: var(--text-dim);
-    text-align: center;
-    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
   }
+
+  .sidebar-footer-text {
+    font-size: 10.5px;
+    color: var(--text-dim);
+    letter-spacing: 0.03em;
+    line-height: 1.4;
+  }
+
+  .theme-toggle {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--gold);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    transition: all 0.15s;
+  }
+  .theme-toggle:hover { border-color: var(--gold-dim); background: var(--gold-glow2); }
 
   /* ── Main ── */
   .main {
@@ -172,6 +263,40 @@
     background: var(--void);
     overflow: hidden;
     position: relative;
+    width: 100%;
+  }
+
+  /* top bar with menu toggle */
+  .top-bar {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+  }
+
+  .menu-toggle {
+    width: 36px;
+    height: 36px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--gold);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .menu-toggle:hover { border-color: var(--gold-dim); background: var(--gold-glow2); }
+
+  .top-bar-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
   }
 
   /* ambient star field */
@@ -191,6 +316,8 @@
     z-index: 0;
   }
 
+  html[data-theme="light"] .main::before { opacity: 0.5; }
+
   /* ── Welcome Screen ── */
   .welcome {
     flex: 1;
@@ -198,9 +325,10 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 40px 20px;
+    padding: 20px 20px 40px;
     position: relative;
     z-index: 1;
+    overflow-y: auto;
   }
 
   .welcome-mandala {
@@ -209,6 +337,7 @@
     margin-bottom: 24px;
     position: relative;
     animation: slowspin 40s linear infinite;
+    flex-shrink: 0;
   }
 
   @keyframes slowspin {
@@ -230,8 +359,9 @@
     font-size: 13px;
     color: var(--text-muted);
     letter-spacing: 0.08em;
-    margin-bottom: 48px;
+    margin-bottom: 40px;
     text-align: center;
+    padding: 0 10px;
   }
 
   .starters-grid {
@@ -282,7 +412,7 @@
   .chat-area {
     flex: 1;
     overflow-y: auto;
-    padding: 24px 0;
+    padding: 12px 0 24px;
     display: none;
     flex-direction: column;
     position: relative;
@@ -344,6 +474,7 @@
 
   .assistant-content {
     flex: 1;
+    min-width: 0;
   }
 
   .assistant-name {
@@ -358,6 +489,7 @@
     font-size: 14px;
     line-height: 1.75;
     color: var(--text);
+    word-wrap: break-word;
   }
 
   .assistant-text p { margin-bottom: 10px; }
@@ -462,7 +594,7 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.25s ease;
   }
 
   .input-wrap:focus-within {
@@ -537,18 +669,59 @@
 
   /* scrollbar for all */
   * { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+
+  /* ══════════════ Responsive: tablet ══════════════ */
+  @media (max-width: 900px) {
+    .sidebar { width: 78vw; min-width: 240px; max-width: 300px; }
+  }
+
+  /* ══════════════ Responsive: mobile ══════════════ */
+  @media (max-width: 640px) {
+    .top-bar { padding: 12px; }
+
+    .welcome { padding: 10px 14px 24px; }
+    .welcome-mandala { width: 60px; height: 60px; margin-bottom: 16px; }
+    .welcome-title { font-size: 27px; }
+    .welcome-subtitle { font-size: 11.5px; margin-bottom: 26px; }
+
+    .starters-grid { grid-template-columns: 1fr; max-width: 420px; }
+    .starter-card { padding: 12px 14px; }
+
+    .message-row { padding: 6px 14px; }
+    .bubble-user { max-width: 88%; }
+    .bubble-assistant { max-width: 96%; gap: 8px; }
+    .assistant-avatar { width: 24px; height: 24px; font-size: 11px; }
+
+    .input-area { padding: 10px 12px 16px; }
+    textarea { padding: 12px 48px 12px 14px; font-size: 15px; }
+    .send-btn { width: 30px; height: 30px; right: 8px; bottom: 8px; }
+
+    .divider { padding: 8px 14px; }
+
+    .sidebar { width: 82vw; min-width: 0; }
+  }
 </style>
 </head>
 <body>
 
+<!-- Backdrop -->
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
 <!-- Sidebar -->
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
-    <div class="brand">
-      <div class="brand-symbol">☽</div>
-      <div class="brand-name">Jyotish</div>
+    <div>
+      <div class="brand">
+        <div class="brand-symbol">☽</div>
+        <div class="brand-name">Jyotish</div>
+      </div>
+      <div class="brand-sub">Vedic Astrology Oracle</div>
     </div>
-    <div class="brand-sub">Vedic Astrology Oracle</div>
+    <button class="sidebar-close-btn" onclick="closeSidebar()" title="Close sidebar" aria-label="Close sidebar">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+        <path d="M1 1l11 11M12 1L1 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
   </div>
   <button class="new-chat-btn" onclick="newChat()">
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -561,12 +734,22 @@
     <div class="history-empty" id="historyEmpty">Your readings will appear here</div>
   </div>
   <div class="sidebar-footer">
-    Brihat Parashara · Saravali · Phaladeepika
+    <div class="sidebar-footer-text">Brihat Parashara<br>Saravali · Phaladeepika</div>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light / dark" aria-label="Toggle theme">☾</button>
   </div>
 </aside>
 
 <!-- Main -->
 <main class="main">
+
+  <div class="top-bar">
+    <button class="menu-toggle" id="menuToggle" onclick="openSidebar()" title="Open sidebar" aria-label="Open sidebar">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <span class="top-bar-title" id="topBarTitle">New Reading</span>
+  </div>
 
   <!-- Welcome -->
   <div class="welcome" id="welcomeScreen">
@@ -641,12 +824,41 @@
   let currentSession = null;
   let isLoading = false;
 
+  /* ───────── Sidebar open/close ───────── */
+  function isMobile() { return window.innerWidth <= 900; }
+
+  function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebarBackdrop').classList.add('visible');
+  }
+
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarBackdrop').classList.remove('visible');
+  }
+
+  function toggleSidebar() {
+    const open = document.getElementById('sidebar').classList.contains('open');
+    open ? closeSidebar() : openSidebar();
+  }
+
+  /* ───────── Theme ───────── */
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isLight = html.getAttribute('data-theme') === 'light';
+    html.setAttribute('data-theme', isLight ? 'dark' : 'light');
+    document.getElementById('themeToggle').textContent = isLight ? '☾' : '☀';
+  }
+
+  /* ───────── Chat logic ───────── */
   function newChat() {
     currentSession = { id: Date.now(), title: null, messages: [] };
     document.getElementById('welcomeScreen').style.display = 'flex';
     document.getElementById('chatArea').classList.remove('visible');
     document.getElementById('chatArea').innerHTML = '';
+    document.getElementById('topBarTitle').textContent = 'New Reading';
     updateHistorySidebar();
+    if (isMobile()) closeSidebar();
   }
 
   function sendStarter(card) {
@@ -690,6 +902,7 @@
       currentSession.title = query.slice(0, 40);
       chatSessions.unshift(currentSession);
     }
+    document.getElementById('topBarTitle').textContent = currentSession.title;
 
     // switch to chat view
     document.getElementById('welcomeScreen').style.display = 'none';
@@ -823,6 +1036,7 @@
   function loadSession(index) {
     currentSession = chatSessions[index];
     document.getElementById('welcomeScreen').style.display = 'none';
+    document.getElementById('topBarTitle').textContent = currentSession.title || 'New Reading';
     const chatArea = document.getElementById('chatArea');
     chatArea.classList.add('visible');
     chatArea.innerHTML = '';
@@ -854,10 +1068,13 @@
 
     chatArea.scrollTop = chatArea.scrollHeight;
     updateHistorySidebar();
+    if (isMobile()) closeSidebar();
   }
 
   // init
+  document.documentElement.setAttribute('data-theme', 'dark');
   newChat();
+  if (!isMobile()) openSidebar();
 </script>
 </body>
 </html>
